@@ -4,12 +4,18 @@ from src.category import Category
 from src.product import Product
 
 
+@pytest.fixture(autouse=True)
+def reset_category_counts() -> None:
+    """Сбросить счётчики категорий перед каждым тестом."""
+    Category.category_count = 0
+
+
 @pytest.fixture
-def first_category():
+def first_category() -> Category:
     return Category(
         name="Смартфоны",
         description="Смартфоны, как средство не только коммуникации, "
-        "но и получения дополнительных функций для удобства жизни",
+                    "но и получения дополнительных функций для удобства жизни",
         products=[
             Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5),
             Product("Iphone 15", "512GB, Gray space", 210000.0, 8),
@@ -19,7 +25,7 @@ def first_category():
 
 
 @pytest.fixture
-def second_category():
+def second_category() -> Category:
     return Category(
         name="Телевизоры",
         description="Современный телевизор, который позволяет наслаждаться просмотром, "
@@ -31,5 +37,5 @@ def second_category():
 
 
 @pytest.fixture
-def product():
+def product() -> Product:
     return Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
