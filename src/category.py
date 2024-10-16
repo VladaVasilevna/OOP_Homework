@@ -1,20 +1,25 @@
+from typing import List, Optional
+
 from src.product import Product
 
 
 class Category:
     name: str
     description: str
-    products: list
-    category_count = 0
-    product_count = 0
+    products: List[Product]
+    category_count: int = 0
+    product_count: int = 0
 
-
-    def __init__(self, name, description, products=None):
+    def __init__(self, name: str, description: str, products: Optional[List[Product]] = None) -> None:
         self.name = name
         self.description = description
         self.products = products if products else []
         Category.category_count += 1
-        Category.product_count += len(products) if products else 0
+        self.product_count += len(products) if products else 0
+
+    def add_product(self, product: Product) -> None:
+        self.products.append(product)
+        self.product_count += 1  # Увеличиваем счётчик продуктов при добавлении нового продукта
 
 
 if __name__ == "__main__":
