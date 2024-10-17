@@ -22,6 +22,13 @@ class Product:
         if new_price <= 0:
             print("Цена не должна быть нулевая или отрицательная.")
             return
+
+        if new_price < self.__price:
+            confirmation = input(f"Вы уверены, что хотите понизить цену с {self.__price} до {new_price}? (y/n): ")
+            if confirmation.lower() != 'y':
+                print("Изменение цены отменено.")
+                return
+
         self.__price = new_price
 
     def merge_with_existing(self, products: List['Product']) -> None:
