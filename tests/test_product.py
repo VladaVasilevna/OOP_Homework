@@ -1,76 +1,79 @@
-import pytest
+from unittest.mock import patch
 
 from src.product import Product
 
 
-def test_product_init(product: Product) -> None:
-    assert product.name == "55\" QLED 4K"
-    assert product.description == "Фоновая подсветка"
-    assert product.price == 123000.0
-    assert product.quantity == 7
+def test_product_creation(product: Product) -> None:
+    """Тест на создание продукта."""
+    assert product.name == "Samsung Galaxy S23 Ultra"
+    assert product.description == "256GB, Серый цвет, 200MP камера"
+    assert product.price == 180000.0
+    assert product.quantity == 5
 
 
-def test_product_negative_price() -> None:
-    with pytest.raises(ValueError):
-        Product("Iphone 15", "512GB, Gray space", -210000.0, 8)
+def test_set_negative_price(product: Product) -> None:
+    """Тест на установку отрицательной цены."""
+    with patch('builtins.print') as mock_print:
+        product.price = -100
+        mock_print.assert_called_once_with("Цена не должна быть нулевая или отрицательная.")
+        assert product.price == 180000.0  # Цена не должна измениться
 
 
-def test_product_negative_quantity() -> None:
-    with pytest.raises(ValueError):
-        Product("Iphone 15", "512GB, Gray space", 210000.0, -8)
+def test_set_zero_price(product: Product) -> None:
+    """Тест на установку нулевой цены."""
+    with patch('builtins.print') as mock_print:
+        product.price = 0
+        mock_print.assert_called_once_with("Цена не должна быть нулевая или отрицательная.")
+        assert product.price == 180000.0  # Цена не должна измениться
 
 
-def test_update_product_price() -> None:
-    product: Product = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product.price = 120000.0
-    assert product.price == 120000.0
+@patch('builtins.input', return_value='y')  # Эмулируем ввод 'y'
+def test_set_valid_price(mock_input: str, product: Product) -> None:
+    """Тест на успешное изменение цены."""
+    product.price = 150000.0
+    assert product.price == 150000.0
 
 
-def test_update_product_quantity() -> None:
-    product: Product = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product.quantity = 15
-    assert product.quantity == 15
+@patch('builtins.input', side_effect=['n'])  # Пользователь отвечает 'n'
+def test_confirm_price_decrease(mock_input: str, product: Product) -> None:
+    """Тест на отказ понижения цены."""
+    with patch('builtins.print') as mock_print:
+        product.price = 170000.0  # Понижаем цену
+        mock_print.assert_called_once_with("Изменение цены отменено.")
+        assert product.price == 180000.0  # Цена не должна измениться
 
 
-def test_product_main_output(capsys: pytest.CaptureFixture) -> None:
-    # Выполняем код из блока main
-    product1: Product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
-    product2: Product = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product3: Product = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+@patch('builtins.input', side_effect=['y'])  # Пользователь отвечает 'y'
+def test_confirm_price_decrease_accept(mock_input: str, product: Product) -> None:
+    """Тест на подтверждение понижения цены."""
+    product.price = 170000.0  # Понижаем цену
+    assert product.price == 170000.0
 
-    print(product1.name)
-    print(product1.description)
-    print(product1.price)
-    print(product1.quantity)
 
-    print(product2.name)
-    print(product2.description)
-    print(product2.price)
-    print(product2.quantity)
+def test_merge_with_existing(product: Product) -> None:
+    """Тест на объединение продуктов."""
+    existing_product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 200000.0, 3)
+    products_list = [existing_product]
 
-    print(product3.name)
-    print(product3.description)
-    print(product3.price)
-    print(product3.quantity)
+    product.merge_with_existing(products_list)
 
-    # Захватываем вывод
-    captured = capsys.readouterr()
+    assert existing_product.quantity == 8  # Объединение количеств
+    assert existing_product.price == 200000.0  # Цена не должна измениться, так как она выше у существующего продукта
+    assert product.quantity == 0  # Количество нового продукта должно стать нулевым
 
-    # Ожидаемый вывод
-    expected_output: str = (
-        "Samsung Galaxy S23 Ultra\n"
-        "256GB, Серый цвет, 200MP камера\n"
-        "180000.0\n"
-        "5\n"
-        "Iphone 15\n"
-        "512GB, Gray space\n"
-        "210000.0\n"
-        "8\n"
-        "Xiaomi Redmi Note 11\n"
-        "1024GB, Синий\n"
-        "31000.0\n"
-        "14\n"
-    )
 
-    # Проверяем, что вывод соответствует ожидаемым значениям
-    assert captured.out == expected_output
+def test_new_product() -> None:
+    """Тест на создание нового продукта из словаря."""
+    product_data: dict[str, str] = {
+        'name': 'Xiaomi Redmi Note 11',
+        'description': '1024GB, Синий',
+        'price': '31000.0',
+        'quantity': '1'
+    }
+
+    new_product = Product.new_product(product_data)
+
+    assert new_product.name == 'Xiaomi Redmi Note 11'
+    assert new_product.description == '1024GB, Синий'
+    assert new_product.price == 31000.0
+    assert new_product.quantity == 1

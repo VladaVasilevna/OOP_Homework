@@ -24,6 +24,10 @@ class Category:
             product_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
         return product_str
 
+    @property
+    def get_products(self) -> List[Product]:
+        return self.__products  # Позволяет получить доступ к списку продуктов
+
     def add_product(self, product: Product) -> None:
         self.__products.append(product)
         Category.product_count += 1
