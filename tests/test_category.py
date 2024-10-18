@@ -32,4 +32,4 @@ def test_product_list_output(category: Category) -> None:
 def test_category_and_product_count(category: Category) -> None:
     """Тест на подсчет категорий и продуктов."""
     assert Category.category_count == 1  # Проверяем количество категорий
-    assert Category.product_count == len(category.get_products)  # Проверяем количество продуктов
+    assert Category.product_count == len(category.products)  # Проверяем количество продуктов
