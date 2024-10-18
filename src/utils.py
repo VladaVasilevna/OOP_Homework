@@ -30,4 +30,4 @@ if __name__ == "__main__":
     categories_data = create_objects_from_json(raw_data)
 
     print(categories_data[0].name)
-    print(categories_data[0].products)
+    print(categories_data[0].product_list)
