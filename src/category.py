@@ -25,7 +25,7 @@ class Category:
         return product_str
 
     @property
-    def get_products(self) -> List[Product]:
+    def products(self) -> List[Product]:
         return self.__products  # Позволяет получить доступ к списку продуктов
 
     def add_product(self, product: Product) -> None:
