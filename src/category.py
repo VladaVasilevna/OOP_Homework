@@ -1,6 +1,5 @@
 from typing import List, Optional
 
-from src.category_iterator import CategoryIterator
 from src.product import Product
 
 
@@ -37,7 +36,9 @@ class Category:
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
-    def __iter__(self) -> CategoryIterator:
+    def __iter__(self) -> "CategoryIterator":
+        from src.category_iterator import CategoryIterator
+
         return CategoryIterator(self)  # Возвращаем новый итератор для этой категории
 
 

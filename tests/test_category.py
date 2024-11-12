@@ -11,7 +11,7 @@ def test_category_creation(category: Category) -> None:
 
 def test_add_product(category: Category) -> None:
     """Тест на добавление продукта в категорию."""
-    new_product: Product = Product("55\" QLED 4K", "Фоновая подсветка", 123000.0, 7)
+    new_product: Product = Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7)
     category.add_product(new_product)
 
     # Проверяем, что новый продукт добавлен
@@ -33,3 +33,10 @@ def test_category_and_product_count(category: Category) -> None:
     """Тест на подсчет категорий и продуктов."""
     assert Category.category_count == 1  # Проверяем количество категорий
     assert Category.product_count == len(category.products)  # Проверяем количество продуктов
+
+
+def test_category_iteration(category: Category) -> None:
+    """Тест на итерацию по продуктам в категории."""
+    products = [product for product in category]  # Используем итератор
+
+    assert len(products) == len(category.products)  # Должно быть столько же продуктов

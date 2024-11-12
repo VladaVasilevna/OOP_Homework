@@ -1,11 +1,10 @@
 from typing import Iterator
 
-from src.category import Category
 from src.product import Product
 
 
 class CategoryIterator(Iterator[Product]):
-    def __init__(self, category: Category) -> None:
+    def __init__(self, category: "Category") -> None:
         self._category = category
         self._index = 0  # Начальный индекс для итерации
 
