@@ -25,13 +25,29 @@ class Product:
 
         if new_price < self.__price:
             confirmation = input(f"Вы уверены, что хотите понизить цену с {self.__price} до {new_price}? (y/n): ")
-            if confirmation.lower() != 'y':
+            if confirmation.lower() != "y":
                 print("Изменение цены отменено.")
                 return
 
         self.__price = new_price
 
-    def merge_with_existing(self, products: List['Product']) -> None:
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: "Product") -> float:
+        if not isinstance(other, Product):
+            return NotImplemented
+
+        # Полная стоимость текущего продукта
+        total_cost_self = self.price * self.quantity
+
+        # Полная стоимость другого продукта
+        total_cost_other = other.price * other.quantity
+
+        # Возвращаем общую стоимость
+        return total_cost_self + total_cost_other
+
+    def merge_with_existing(self, products: List["Product"]) -> None:
         for existing_product in products:
             if existing_product.name == self.name:
                 existing_product.quantity += self.quantity
@@ -47,37 +63,25 @@ class Product:
         products.append(self)  # Если товара не существует в списке, добавляем его
 
     @classmethod
-    def new_product(cls, product_data: Dict[str, str]) -> 'Product':
-        name = product_data.get('name', "")
-        description = product_data.get('description', "")
+    def new_product(cls, product_data: Dict[str, str]) -> "Product":
+        name = product_data.get("name", "")
+        description = product_data.get("description", "")
 
         # Преобразование значений из строк в нужные типы с проверкой на None
-        price = float(product_data.get('price', 0)) if product_data.get('price') is not None else 0.0
-        quantity = int(product_data.get('quantity', 0)) if product_data.get('quantity') is not None else 0
+        price = float(product_data.get("price", 0)) if product_data.get("price") is not None else 0.0
+        quantity = int(product_data.get("quantity", 0)) if product_data.get("quantity") is not None else 0
 
         return cls(name, description, price, quantity)  # Возвращаем новый объект
-
-    def __str__(self) -> str:
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other: 'Product') -> 'Product':
-        if not isinstance(other, Product):
-            return NotImplemented
-
-        # Создаем новый продукт с суммой цен и количеством
-        new_name = f"{self.name} + {other.name}"  # Можно изменить на нужное представление
-        new_price = self.price + other.price
-        new_quantity = self.quantity + other.quantity
-
-        return Product(new_name, "", new_price, new_quantity)
 
 
 if __name__ == "__main__":
     new_product = Product.new_product(
-        {"name": "Samsung Galaxy S23 Ultra",
-         "description": "256GB, Серый цвет, 200MP камера",
-         "price": "180000.0",
-         "quantity": "5"}
+        {
+            "name": "Samsung Galaxy S23 Ultra",
+            "description": "256GB, Серый цвет, 200MP камера",
+            "price": "180000.0",
+            "quantity": "5",
+        }
     )
 
     print(new_product.name)
@@ -95,10 +99,10 @@ if __name__ == "__main__":
     print(new_product.price)
 
     product_data1 = {
-        'name': 'Xiaomi Redmi Note 11',
-        'description': '1024GB, Синий',
-        'price': '31000.0',
-        'quantity': '1'
+        "name": "Xiaomi Redmi Note 11",
+        "description": "1024GB, Синий",
+        "price": "31000.0",
+        "quantity": "1",
     }
 
     product1 = Product.new_product(product_data1)
@@ -109,10 +113,10 @@ if __name__ == "__main__":
     print(product1.quantity)
 
     product_data2 = {
-        'name': 'Xiaomi Redmi Note 11',
-        'description': '1024GB, Черный',
-        'price': '32000.0',
-        'quantity': '5'
+        "name": "Xiaomi Redmi Note 11",
+        "description": "1024GB, Черный",
+        "price": "32000.0",
+        "quantity": "5",
     }
 
     product2 = Product.new_product(product_data2)

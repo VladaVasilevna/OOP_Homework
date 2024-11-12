@@ -8,7 +8,7 @@ from src.product import Product
 
 def read_json(path: str) -> List[Dict[str, Any]]:
     full_path = os.path.abspath(path)
-    with open(full_path, 'r', encoding="UTF-8") as file:
+    with open(full_path, "r", encoding="UTF-8") as file:
         data: List[Dict[str, Any]] = json.load(file)
     return data
 
