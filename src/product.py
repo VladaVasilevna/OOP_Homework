@@ -57,6 +57,20 @@ class Product:
 
         return cls(name, description, price, quantity)  # Возвращаем новый объект
 
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other: 'Product') -> 'Product':
+        if not isinstance(other, Product):
+            return NotImplemented
+
+        # Создаем новый продукт с суммой цен и количеством
+        new_name = f"{self.name} + {other.name}"  # Можно изменить на нужное представление
+        new_price = self.price + other.price
+        new_quantity = self.quantity + other.quantity
+
+        return Product(new_name, "", new_price, new_quantity)
+
 
 if __name__ == "__main__":
     new_product = Product.new_product(
