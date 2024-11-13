@@ -38,6 +38,10 @@ class Product:
         if not isinstance(other, Product):
             return NotImplemented
 
+        # Проверяем, что типы продуктов совпадают
+        if not isinstance(other, type(self)):
+            raise TypeError(f"Нельзя складывать продукты разных типов: {type(self).__name__} и {type(other).__name__}")
+
         # Полная стоимость текущего продукта
         total_cost_self = self.price * self.quantity
 

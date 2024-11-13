@@ -1,5 +1,8 @@
 from unittest.mock import patch
 
+import pytest
+
+from src.lawn_grass import LawnGrass
 from src.product import Product
 
 
@@ -86,3 +89,49 @@ def test_addition_of_products() -> None:
 
     total_cost = product1 + product2
     assert total_cost == (100.0 * 2 + 200.0 * 3)  # Ожидаемая стоимость
+
+
+def test_create_lawn_grass(lawn_grass: LawnGrass) -> None:
+    """Тест на создание LawnGrass"""
+    assert lawn_grass.name == "Газонная трава"
+    assert lawn_grass.country == "Россия"
+
+
+def test_lawn_grass_str(lawn_grass: LawnGrass) -> None:
+    """Тест на строковое представление LawnGrass"""
+    expected_str = (
+        f"Газонная трава, {lawn_grass.price} руб. Остаток: "
+        f"{lawn_grass.quantity} шт., Страна-производитель: {lawn_grass.country}, "
+        f"Срок прорастания: {lawn_grass.germination_period}, Цвет: {lawn_grass.color}"
+    )
+    assert str(lawn_grass) == expected_str
+
+
+def test_create_product_with_negative_quantity() -> None:
+    """Тест на создание продукта с отрицательным количеством."""
+    with pytest.raises(ValueError, match="Количество не может быть отрицательным."):
+        Product("Товар", "Описание товара", 100.0, -1)
+
+
+def test_merge_with_existing_updates_price() -> None:
+    """Тест на объединение продуктов с обновлением цены."""
+    existing_product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 200000.0, 3)
+    products_list = [existing_product]
+
+    new_product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 250000.0, 5)
+    new_product.merge_with_existing(products_list)
+
+    assert existing_product.price == 250000.0
+
+
+def test_new_product_with_invalid_data() -> None:
+    """Тест на создание нового продукта из словаря с некорректными данными."""
+    product_data = {
+        "name": "Xiaomi Redmi Note 11",
+        "description": "1024GB, Синий",
+        "price": "-31000.0",
+        "quantity": "1",
+    }
+
+    with pytest.raises(ValueError, match="Цена не может быть отрицательной."):
+        Product.new_product(product_data)
