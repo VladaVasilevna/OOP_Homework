@@ -1,5 +1,6 @@
 from typing import Iterator
 
+from src.category import Category
 from src.product import Product
 
 

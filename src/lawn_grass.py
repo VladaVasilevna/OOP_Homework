@@ -9,7 +9,7 @@ class LawnGrass(Product):
         price: float,
         quantity: int,
         country: str,
-        germination_period: int,
+        germination_period: str,
         color: str,
     ) -> None:
         super().__init__(name, description, price, quantity)

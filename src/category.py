@@ -31,8 +31,17 @@ class Category:
         return self.__products  # Позволяет получить доступ к списку продуктов
 
     def add_product(self, product: Product) -> None:
+        if not isinstance(product, Product):
+            raise TypeError(f"Можно добавлять только продукты или их наследники, а не {type(product).__name__}.")
+
         self.__products.append(product)
         Category.product_count += 1
+
+    def add_smartphone(self, smartphone: Smartphone) -> None:
+        self.add_product(smartphone)
+
+    def add_lawn_grass(self, lawn_grass: LawnGrass) -> None:
+        self.add_product(lawn_grass)
 
     def __str__(self) -> str:
         total_quantity = sum(product.quantity for product in self.__products)
@@ -42,14 +51,6 @@ class Category:
         from src.category_iterator import CategoryIterator
 
         return CategoryIterator(self)  # Возвращаем новый итератор для этой категории
-
-    def add_smartphone(self, smartphone: Smartphone) -> None:
-        self.__products.append(smartphone)
-        Category.product_count += 1
-
-    def add_lawn_grass(self, lawn_grass: LawnGrass) -> None:
-        self.__products.append(lawn_grass)
-        Category.product_count += 1
 
 
 if __name__ == "__main__":
@@ -117,3 +118,19 @@ if __name__ == "__main__":
         print("Возникла ошибка TypeError при попытке сложения")
     else:
         print("Не возникла ошибка TypeError при попытке сложения")
+
+    category_smartphones = Category("Смартфоны", "Высокотехнологичные смартфоны", [smartphone1, smartphone2])
+    category_grass = Category("Газонная трава", "Различные виды газонной травы", [grass1, grass2])
+
+    category_smartphones.add_product(smartphone3)
+
+    print(category_smartphones.products)
+
+    print(Category.product_count)
+
+    try:
+        category_smartphones.add_product("Not a product")
+    except TypeError:
+        print("Возникла ошибка TypeError при добавлении не продукта")
+    else:
+        print("Не возникла ошибка TypeError при добавлении не продукта")
