@@ -20,6 +20,6 @@ class LawnGrass(Product):
     def __str__(self) -> str:
         return (
             super().__str__()
-            + f", Страна-производитель: {self.country}, Срок прорастания: {self.germination_period} дней, "
+            + f", Страна-производитель: {self.country}, Срок прорастания: {self.germination_period}, "
             f"Цвет: {self.color}"
         )

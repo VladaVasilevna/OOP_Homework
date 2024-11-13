@@ -16,19 +16,14 @@ class Category:
         self.name = name
         self.description = description
         self.__products = products if products else []
-        Category.category_count += 1
-        Category.product_count += len(products) if products else 0
 
-    @property
-    def product_list(self) -> str:
-        product_str = ""
+        # Проверка на тип продуктов
         for product in self.__products:
-            product_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
-        return product_str
-
-    @property
-    def products(self) -> List[Product]:
-        return self.__products  # Позволяет получить доступ к списку продуктов
+            if not isinstance(product, Product):
+                raise TypeError("Все продукты должны быть экземплярами Product или его подклассов.")
+        # Обновляем счетчики
+        Category.category_count += 1
+        Category.product_count += len(self.__products) if products else 0
 
     def add_product(self, product: Product) -> None:
         if not isinstance(product, Product):
@@ -42,6 +37,17 @@ class Category:
 
     def add_lawn_grass(self, lawn_grass: LawnGrass) -> None:
         self.add_product(lawn_grass)
+
+    @property
+    def product_list(self) -> str:
+        product_str = ""
+        for product in self.__products:
+            product_str += f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
+        return product_str
+
+    @property
+    def products(self) -> List[Product]:
+        return self.__products  # Позволяет получить доступ к списку продуктов
 
     def __str__(self) -> str:
         total_quantity = sum(product.quantity for product in self.__products)
