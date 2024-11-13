@@ -104,3 +104,16 @@ if __name__ == "__main__":
     print(grass2.country)
     print(grass2.germination_period)
     print(grass2.color)
+
+    smartphone_sum = smartphone1 + smartphone2
+    print(smartphone_sum)
+
+    grass_sum = grass1 + grass2
+    print(grass_sum)
+
+    try:
+        invalid_sum = smartphone1 + grass1
+    except TypeError:
+        print("Возникла ошибка TypeError при попытке сложения")
+    else:
+        print("Не возникла ошибка TypeError при попытке сложения")
