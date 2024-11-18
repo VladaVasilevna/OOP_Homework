@@ -122,3 +122,11 @@ def test_grass_inheritance() -> None:
 
     assert grass.name == "Газонная трава"
     assert grass.type_of_grass == "Рулонная"
+
+
+def test_product_zero_quantity() -> None:
+    """Тест на создание продукта с нулевым количеством."""
+    with pytest.raises(ValueError) as excinfo:
+        Product("Товар", "Описание товара", 100.0, 0)
+
+    assert str(excinfo.value) == "Товар с нулевым количеством не может быть добавлен."

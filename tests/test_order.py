@@ -1,6 +1,6 @@
 import pytest
 
-from src.order import Order
+from src.order import Order, ZeroQuantityError
 from src.product import Product
 
 
@@ -18,5 +18,7 @@ def test_order_invalid_quantity() -> None:
     """Тестирует обработку ошибки при создании заказа с отрицательным количеством."""
     product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 180000.0, 5)
 
-    with pytest.raises(ValueError):
+    with pytest.raises(ZeroQuantityError) as excinfo:
         Order(product, -1)  # Проверка на отрицательное количество
+
+    assert str(excinfo.value) == "Товар с нулевым количеством не может быть добавлен."

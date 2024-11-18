@@ -85,3 +85,20 @@ def test_product_count_increment() -> None:
     category.add_product(new_product)
 
     assert Category.product_count == initial_count + 1
+
+
+def test_middle_price_no_products() -> None:
+    """Тест на среднюю цену при отсутствии продуктов."""
+    category = Category("Пустая категория", "Описание пустой категории")
+
+    assert category.middle_price() == 0.0
+
+
+def test_middle_price_with_products() -> None:
+    """Тест на среднюю цену с несколькими продуктами."""
+    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 180000.0, 5)
+    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+
+    category = Category("Смартфоны", "Описание смартфонов", [product1, product2])
+
+    assert category.middle_price() == (180000.0 + 210000.0) / 2
