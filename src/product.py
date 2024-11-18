@@ -1,8 +1,13 @@
 from typing import Dict, List
 
+from src.base_product import BaseProduct
+from src.mixins import CreationLoggerMixin
 
-class Product:
+
+class Product(CreationLoggerMixin, BaseProduct):
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+        CreationLoggerMixin.__init__(self, name, description, price, quantity)
+
         if price < 0:
             raise ValueError("Цена не может быть отрицательной.")
         if quantity < 0:
@@ -12,6 +17,9 @@ class Product:
         self.description = description
         self.__price = price  # Приватный атрибут цены
         self.quantity = quantity
+
+        # Вызов конструктора родительского класса
+        super().__init__(name, description, price, quantity)
 
     @property
     def price(self) -> float:
@@ -25,13 +33,13 @@ class Product:
 
         if new_price < self.__price:
             confirmation = input(f"Вы уверены, что хотите понизить цену с {self.__price} до {new_price}? (y/n): ")
-            if confirmation.lower() != 'y':
+            if confirmation.lower() != "y":
                 print("Изменение цены отменено.")
                 return
 
         self.__price = new_price
 
-    def merge_with_existing(self, products: List['Product']) -> None:
+    def merge_with_existing(self, products: List["Product"]) -> None:
         for existing_product in products:
             if existing_product.name == self.name:
                 existing_product.quantity += self.quantity
@@ -47,23 +55,58 @@ class Product:
         products.append(self)  # Если товара не существует в списке, добавляем его
 
     @classmethod
-    def new_product(cls, product_data: Dict[str, str]) -> 'Product':
-        name = product_data.get('name', "")
-        description = product_data.get('description', "")
+    def new_product(cls, product_data: Dict[str, str]) -> "Product":
+        name = product_data.get("name", "")
+        description = product_data.get("description", "")
 
         # Преобразование значений из строк в нужные типы с проверкой на None
-        price = float(product_data.get('price', 0)) if product_data.get('price') is not None else 0.0
-        quantity = int(product_data.get('quantity', 0)) if product_data.get('quantity') is not None else 0
+        price = float(product_data.get("price", 0)) if product_data.get("price") is not None else 0.0
+        quantity = int(product_data.get("quantity", 0)) if product_data.get("quantity") is not None else 0
 
         return cls(name, description, price, quantity)  # Возвращаем новый объект
+
+    def get_info(self) -> str:
+        return f"{self.name}: {self.description}, Цена: {self.price}, Остаток: {self.quantity}"
+
+    def calculate_discounted_price(self, discount: float) -> float:
+        if discount < 0 or discount > 100:
+            raise ValueError("Скидка должна быть в диапазоне от 0 до 100.")
+        return self.price * (1 - discount / 100)
+
+    def __repr__(self) -> str:
+        return (
+            f"Product(name={self.name}, description={self.description}, price={self.price}, "
+            f"quantity={self.quantity})"
+        )
+
+
+# Классы для смартфонов и травы газонной
+class Smartphone(Product):
+    def __init__(self, name: str, description: str, price: float, quantity: int, os: str) -> None:
+        super().__init__(name, description, price, quantity)
+        self.os = os
+
+    def get_info(self) -> str:
+        return f"{super().get_info()}, ОС: {self.os}"
+
+
+class Grass(Product):
+    def __init__(self, name: str, description: str, price: float, quantity: int, type_of_grass: str) -> None:
+        super().__init__(name, description, price, quantity)
+        self.type_of_grass = type_of_grass
+
+    def get_info(self) -> str:
+        return f"{super().get_info()}, Тип травы: {self.type_of_grass}"
 
 
 if __name__ == "__main__":
     new_product = Product.new_product(
-        {"name": "Samsung Galaxy S23 Ultra",
-         "description": "256GB, Серый цвет, 200MP камера",
-         "price": "180000.0",
-         "quantity": "5"}
+        {
+            "name": "Samsung Galaxy S23 Ultra",
+            "description": "256GB, Серый цвет, 200MP камера",
+            "price": "180000.0",
+            "quantity": "5",
+        }
     )
 
     print(new_product.name)
@@ -81,10 +124,10 @@ if __name__ == "__main__":
     print(new_product.price)
 
     product_data1 = {
-        'name': 'Xiaomi Redmi Note 11',
-        'description': '1024GB, Синий',
-        'price': '31000.0',
-        'quantity': '1'
+        "name": "Xiaomi Redmi Note 11",
+        "description": "1024GB, Синий",
+        "price": "31000.0",
+        "quantity": "1",
     }
 
     product1 = Product.new_product(product_data1)
@@ -95,10 +138,10 @@ if __name__ == "__main__":
     print(product1.quantity)
 
     product_data2 = {
-        'name': 'Xiaomi Redmi Note 11',
-        'description': '1024GB, Черный',
-        'price': '32000.0',
-        'quantity': '5'
+        "name": "Xiaomi Redmi Note 11",
+        "description": "1024GB, Черный",
+        "price": "32000.0",
+        "quantity": "5",
     }
 
     product2 = Product.new_product(product_data2)
