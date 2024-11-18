@@ -19,7 +19,7 @@ class LawnGrass(Product):
 
     def __str__(self) -> str:
         return (
-            super().__str__()
-            + f", Страна-производитель: {self.country}, Срок прорастания: {self.germination_period}, "
-            f"Цвет: {self.color}"
+            f"{self.name}, {self.price} руб. Остаток: "
+            f"{self.quantity} шт., Страна-производитель: {self.country}, "
+            f"Срок прорастания: {self.germination_period}, Цвет: {self.color}"
         )

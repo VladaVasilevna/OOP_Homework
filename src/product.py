@@ -10,12 +10,12 @@ class Product(CreationLoggerMixin, BaseProduct):
 
         if price < 0:
             raise ValueError("Цена не может быть отрицательной.")
-        if quantity < 0:
-            raise ValueError("Количество не может быть отрицательным.")
+        if quantity < 1:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
 
         self.name = name
         self.description = description
-        self.__price = price  # Приватный атрибут цены
+        self.__price = price
         self.quantity = quantity
 
         # Вызов конструктора родительского класса
@@ -24,6 +24,9 @@ class Product(CreationLoggerMixin, BaseProduct):
     @property
     def price(self) -> float:
         return self.__price
+
+    def __str__(self) -> str:
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     @price.setter
     def price(self, new_price: float) -> None:
@@ -46,7 +49,7 @@ class Product(CreationLoggerMixin, BaseProduct):
 
                 # Обновление цены на более высокую
                 if self.price > existing_product.price:
-                    existing_product.price = self.price
+                    existing_product.__price = self.price
 
                 # Устанавливаем текущее количество в 0 после объединения
                 self.quantity = 0
@@ -114,13 +117,13 @@ if __name__ == "__main__":
     print(new_product.price)
     print(new_product.quantity)
 
-    new_product.price = 800
+    new_product.__price = 800
     print(new_product.price)
 
-    new_product.price = -100  # Это вызовет сообщение об ошибке
+    new_product.__price = -100  # Это вызовет сообщение об ошибке
     print(new_product.price)
 
-    new_product.price = 0  # Это также вызовет сообщение об ошибке
+    new_product.__price = 0  # Это также вызовет сообщение об ошибке
     print(new_product.price)
 
     product_data1 = {
