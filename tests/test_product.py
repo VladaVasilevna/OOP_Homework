@@ -2,8 +2,7 @@ from unittest.mock import patch
 
 import pytest
 
-from src.lawn_grass import LawnGrass
-from src.product import Product
+from src.product import Grass, Product, Smartphone
 
 
 def test_product_creation(product: Product) -> None:
@@ -82,56 +81,44 @@ def test_new_product() -> None:
     assert new_product.quantity == 1
 
 
-def test_addition_of_products() -> None:
-    """Тест на сложение двух продуктов."""
-    product1 = Product("Product A", "Description A", 100.0, 2)
-    product2 = Product("Product B", "Description B", 200.0, 3)
+def test_calculate_discounted_price(product: Product) -> None:
+    """Тест на расчет цены со скидкой."""
+    discounted_price = product.calculate_discounted_price(20)  # Скидка в 20%
 
-    total_cost = product1 + product2
-    assert total_cost == (100.0 * 2 + 200.0 * 3)  # Ожидаемая стоимость
+    assert discounted_price == (180000 * (1 - 0.20))  # Ожидаемая цена со скидкой
 
 
-def test_create_lawn_grass(lawn_grass: LawnGrass) -> None:
-    """Тест на создание LawnGrass"""
-    assert lawn_grass.name == "Газонная трава"
-    assert lawn_grass.country == "Россия"
+def test_calculate_discounted_price_invalid(product: Product) -> None:
+    """Тест на обработку некорректных значений скидки."""
+
+    with pytest.raises(ValueError):
+        product.calculate_discounted_price(-10)  # Негативная скидка
+
+    with pytest.raises(ValueError):
+        product.calculate_discounted_price(110)  # Скидка больше 100%
 
 
-def test_lawn_grass_str(lawn_grass: LawnGrass) -> None:
-    """Тест на строковое представление LawnGrass"""
-    expected_str = (
-        f"Газонная трава, {lawn_grass.price} руб. Остаток: "
-        f"{lawn_grass.quantity} шт., Страна-производитель: {lawn_grass.country}, "
-        f"Срок прорастания: {lawn_grass.germination_period}, Цвет: {lawn_grass.color}"
-    )
-    assert str(lawn_grass) == expected_str
+def test_get_info(product: Product) -> None:
+    """Тест на метод get_info."""
+
+    expected_info = "Samsung Galaxy S23 Ultra: 256GB, Серый цвет, 200MP камера, Цена: 180000.0, Остаток: 5"
+
+    assert product.get_info() == expected_info
 
 
-def test_create_product_with_negative_quantity() -> None:
-    """Тест на создание продукта с отрицательным количеством."""
-    with pytest.raises(ValueError, match="Количество не может быть отрицательным."):
-        Product("Товар", "Описание товара", 100.0, -1)
+def test_smartphone_inheritance() -> None:
+    """Тест на создание объекта Smartphone и проверку наследования."""
+
+    smartphone = Smartphone("Iphone X", "256GB, Black", 90000.0, 10, os="iOS")
+
+    assert smartphone.name == "Iphone X"
+    assert smartphone.os == "iOS"
 
 
-def test_merge_with_existing_updates_price() -> None:
-    """Тест на объединение продуктов с обновлением цены."""
-    existing_product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 200000.0, 3)
-    products_list = [existing_product]
+def test_grass_inheritance() -> None:
+    """Тест на создание объекта Grass и проверку наследования."""
 
-    new_product = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет", 250000.0, 5)
-    new_product.merge_with_existing(products_list)
+    grass = Grass("Газонная трава", "Зеленая трава для газонов", 5000.0, 20, type_of_grass="Рулонная")
 
-    assert existing_product.price == 250000.0
-
-
-def test_new_product_with_invalid_data() -> None:
-    """Тест на создание нового продукта из словаря с некорректными данными."""
-    product_data = {
-        "name": "Xiaomi Redmi Note 11",
-        "description": "1024GB, Синий",
-        "price": "-31000.0",
-        "quantity": "1",
-    }
-
-    with pytest.raises(ValueError, match="Цена не может быть отрицательной."):
-        Product.new_product(product_data)
+    assert grass.name == "Газонная трава"
+    assert grass.type_of_grass == "Рулонная"

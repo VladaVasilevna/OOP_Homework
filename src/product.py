@@ -1,8 +1,13 @@
 from typing import Dict, List
 
+from src.base_product import BaseProduct
+from src.mixins import CreationLoggerMixin
 
-class Product:
+
+class Product(CreationLoggerMixin, BaseProduct):
     def __init__(self, name: str, description: str, price: float, quantity: int) -> None:
+        CreationLoggerMixin.__init__(self, name, description, price, quantity)
+
         if price < 0:
             raise ValueError("Цена не может быть отрицательной.")
         if quantity < 0:
@@ -12,6 +17,9 @@ class Product:
         self.description = description
         self.__price = price  # Приватный атрибут цены
         self.quantity = quantity
+
+        # Вызов конструктора родительского класса
+        super().__init__(name, description, price, quantity)
 
     @property
     def price(self) -> float:
@@ -30,26 +38,6 @@ class Product:
                 return
 
         self.__price = new_price
-
-    def __str__(self) -> str:
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other: "Product") -> float:
-        if not isinstance(other, Product):
-            return NotImplemented
-
-        # Проверяем, что типы продуктов совпадают
-        if not isinstance(other, type(self)):
-            raise TypeError(f"Нельзя складывать продукты разных типов: {type(self).__name__} и {type(other).__name__}")
-
-        # Полная стоимость текущего продукта
-        total_cost_self = self.price * self.quantity
-
-        # Полная стоимость другого продукта
-        total_cost_other = other.price * other.quantity
-
-        # Возвращаем общую стоимость
-        return total_cost_self + total_cost_other
 
     def merge_with_existing(self, products: List["Product"]) -> None:
         for existing_product in products:
@@ -76,6 +64,39 @@ class Product:
         quantity = int(product_data.get("quantity", 0)) if product_data.get("quantity") is not None else 0
 
         return cls(name, description, price, quantity)  # Возвращаем новый объект
+
+    def get_info(self) -> str:
+        return f"{self.name}: {self.description}, Цена: {self.price}, Остаток: {self.quantity}"
+
+    def calculate_discounted_price(self, discount: float) -> float:
+        if discount < 0 or discount > 100:
+            raise ValueError("Скидка должна быть в диапазоне от 0 до 100.")
+        return self.price * (1 - discount / 100)
+
+    def __repr__(self) -> str:
+        return (
+            f"Product(name={self.name}, description={self.description}, price={self.price}, "
+            f"quantity={self.quantity})"
+        )
+
+
+# Классы для смартфонов и травы газонной
+class Smartphone(Product):
+    def __init__(self, name: str, description: str, price: float, quantity: int, os: str) -> None:
+        super().__init__(name, description, price, quantity)
+        self.os = os
+
+    def get_info(self) -> str:
+        return f"{super().get_info()}, ОС: {self.os}"
+
+
+class Grass(Product):
+    def __init__(self, name: str, description: str, price: float, quantity: int, type_of_grass: str) -> None:
+        super().__init__(name, description, price, quantity)
+        self.type_of_grass = type_of_grass
+
+    def get_info(self) -> str:
+        return f"{super().get_info()}, Тип травы: {self.type_of_grass}"
 
 
 if __name__ == "__main__":
